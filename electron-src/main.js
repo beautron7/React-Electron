@@ -1,54 +1,48 @@
-var DEVELOPMENT = false; //when debugging, this variable is false. in the final product, it is true
-for (var i = 0; i < process.argv.length; i++) {
-  if(process.argv[i] == "--dev") {
-    DEVELOPMENT = true;
-  }
-}
-
 const electron = require('electron')
-var app = electron.app;
-var gwin;
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
+const windows = new Set();
 
-const windows = {}
-
-function OpenNewWindow () {
-  var win = new BrowserWindow({width: 800, height: 600}) 
-  gwin = win;
-  var startUrl;
+function OpenNewWindow() {
+  var win = new electron.BrowserWindow({ width: 800, height: 600 })
   
-  if(DEVELOPMENT){
-    startUrl = "http://localhost:3000";
-  } else {
-    startUrl = `file://${__dirname}/../react-build/index.html`;
-  }
-  
-  win.loadURL(startUrl);
-    
-  win.__id = Symbol("BrowserWindow");
-  windows[win.__id] = win //this keeps the window autodeleted.
-  
+  //while our window is open, it's important to maintain a global reference to it
+  windows.add(win)
   win.on('closed', function () {
-    windows[win.__id] = null //remove the global reference so node can delete the window obj
+    windows.delete(win);
   })
 
-  // BrowserWindow.addDevToolsExtension( //REACT DEVTOOLS
-  //   '/path/to/Google/Chrome/User Data/Default/Extensions/the id of reactdevtools/reactdevtoolsversion'
-  // );
+  //choose between the live-reload development server and a packaged webpage to load.
+  if(isInDevelopmentMode()){
+    win.loadURL("http://localhost:3000")
+  } else {
+    win.loadURL(`file://${__dirname}/../react-build/index.html`)
+  }
 }
 
-app.on('ready', OpenNewWindow)
+electron.app.on('ready', OpenNewWindow)
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') { //osx apps are supposed to act like this
-    app.quit()
-  }
+
+//when all windows are closed, this function will quit the app.
+electron.app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin')//On macOS, we shouldn't quit the app when all windows close. 
+    electron.app.quit();
 })
 
-app.on('activate', function () {
-  if (Object.getOwnPropertySymbols(windows).length === 0) {
-    OpenNewWindow()
-  }
+electron.app.on('activate', function () {
+  //this only comes up in macOs; 
+  //if no windows are open when we activate the app 
+  //(eg: we click on it in the dock), then we open a window.
+  if (windows.size() === 0)
+    OpenNewWindow();
 })
+
+function isInDevelopmentMode(){
+  for (var i = 0; i < process.argv.length; i++) {
+    if (process.argv[i] == "--dev") {
+      return true;
+    }
+  }
+  return false
+}
