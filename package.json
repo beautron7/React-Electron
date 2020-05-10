@@ -7,7 +7,7 @@
     "babel-plugin-root-import": "^5.1.0",
     "copy-dir": "^0.3.0",
     "delete-directory-recursive": "^1.0.0",
-    "electron": "^2.0.18",
+    "electron": "^8.2.5",
     "electron-packager": "^12.2.0",
     "electron-react-devtools": "^0.4.0",
     "electron-winstaller": "^2.7.0",
@@ -34,17 +34,5 @@
     "dev:electron": "electron . --dev --inspect=9877 --remote-debugging-port=9876",
     "postinstall": "node ./tools/postinstall.js"
   },
-  "homepage": "../react-build",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "homepage": "../react-build"
 }

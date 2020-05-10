@@ -9,6 +9,7 @@ function OpenNewWindow() {
   
   //while our window is open, it's important to maintain a global reference to it
   windows.add(win)
+  
   win.on('closed', function () {
     windows.delete(win);
   })
