@@ -7,7 +7,7 @@
     "babel-plugin-root-import": "^5.1.0",
     "copy-dir": "^0.3.0",
     "delete-directory-recursive": "^1.0.0",
-    "electron": "^8.2.5",
+    "electron": "^9.4.0",
     "electron-packager": "^12.2.0",
     "electron-react-devtools": "^0.4.0",
     "electron-winstaller": "^2.7.0",
